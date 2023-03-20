@@ -50,7 +50,7 @@ class SupConLoss(nn.Module):
             labels = labels.contiguous().view(-1, 1)
             if labels.shape[0] != batch_size:
                 raise ValueError('Num of labels does not match num of features')
-            mask = torch.eq(labels, labels.T).float().to(device)
+            mask = torch.eq(labels, labels.T).float().to(device)    # labels为bx1，此处生成True/False（bxb）掩膜，按照标签i与标签j是否相同为规则
         else:
             mask = mask.float().to(device)
 
@@ -65,7 +65,7 @@ class SupConLoss(nn.Module):
         else:
             raise ValueError('Unknown mode: {}'.format(self.contrast_mode))
 
-        # compute logits
+        # compute logits，公式中的z·k/tau
         anchor_dot_contrast = torch.div(
             torch.matmul(anchor_feature, contrast_feature.T),
             self.temperature)
